@@ -87,19 +87,27 @@ class AzureExpressRoute(AzureRMModuleBase):
         #self.log("_____________________________")
         #self.log("__________INIT CALLED____________")
         # define user inputs from playbook
+        self.service_provider_properties_spec=dict(
+            service_provider_name=dict(type='str'),
+            peering_location=dict(type='str'),
+            bandwidth_in_mbps=dict(type='str')
+        )
+
+
         self.module_arg_spec = dict(
             resource_group=dict(type='str', required=True),
             name=dict(type='str', required=True),
             location=dict(type='str'),
             provider=dict(type='str'),
-            peering_location=dict(type='str'),
-            bandwith=dict(type='str'),
-            sku=dict(choices=["Standard", "Premium"],
-                     default='Standard', type='str'),
+            bandwidth_in_mbps=dict(type='str'),
+            sku=dict(),
             billing_model=dict(
                 choices=['Metered', 'Unlimited'], default='Metered', type='str'),
             state=dict(choices=['present', 'absent'],
-                       default='present', type='str')
+                       default='present', type='str'),
+            service_provider_properties=dict(type='dict', options=self.service_provider_properties_spec),
+            family=dict(type='str'),
+            tier=dict(type='str')
         )
         #self.resource_group = None
         self.name = None
@@ -148,14 +156,23 @@ class AzureExpressRoute(AzureRMModuleBase):
         self.log("create or update Express Route {0}".format(self.name))
         try:
 
-            self.log("params: ", params)
-            print("params: ", params)
-            print("type(params): ", type(params))
-            print("params.get(resource_group): ", params.get("resource_group"))
-            print("dir====>", dir(self.network_client.express_route_circuits))
+            #self.log("params: ", params)
+            #print("params: ", params)
+            #print("type(params): ", type(params))
+            #print("params.get(resource_group): ", params.get("resource_group"))
+            #print("dir====>", dir(self.network_client.express_route_circuits))
             #print("rg: ", self.resource_group)
-            response = self.network_client.express_route_circuits.begin_create_or_update(resource_group_name=params.get("resource_group"),
-                                                                                   circuit_name=params.get("name"), peering_name="peering_name", peering_, parameters=params)
+            #print(dir(self.network_client.express_route_circuits))
+            #response = self.network_client.express_route_circuits.create_or_update(resource_group_name=params.get("resource_group"),
+            #                                                                             circuit_name=params.get("name"),
+            #                                                                             parameters=self.network_client.express_route_circuit(params))
+
+            import json
+            param_list = params
+            print("param_list: ", param_list)
+            print("type(param_list): ", type(param_list))
+            response = self.network_client.express_route_circuits.create_or_update(resource_group_name=params.get("resource_group"), circuit_name=params.get("name"), parameters=param_list)
+
             self.log("Response : {0}".format(response))
         except CloudError as ex:
             self.fail("Failed to create express route {0} in resource group {1}: {2}".format(
