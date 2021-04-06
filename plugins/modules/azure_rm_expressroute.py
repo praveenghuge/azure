@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright (c) 2020 Sakar Mehra (@sakar97), Praveen Ghuge (@praveenghuge), Karl Dasan (@karldas30)
+# Copyright (c) 2020 Sakar Mehra (@sakar97), Praveen Ghuge (@praveenghuge), Karl Dasan (@ikarldasan)
 #
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
@@ -60,7 +60,7 @@ extends_documentation_fragment:
 - azure.azcollection.azure
 author:
     - Praveen Ghuge (@praveenghuge)
-    - Karl Dasan (@ikarldas30)
+    - Karl Dasan (@ikarldasan)
     - Sakar Mehra (@sakar97)
 '''
 EXAMPLES = '''
@@ -108,7 +108,7 @@ class AzureExpressRoute(AzureRMModuleBase):
             name=dict(type='str', required=True),
             location=dict(type='str', required=True),
             sku=dict(type='dict', options=self.sku_spec, required=True),
-            tags=dict(type='list', elements='dict'),
+            tags=dict(type='dict'),
             allow_classic_operations=dict(type='bool'),
             authorizations=dict(type='list', elements='dict', options=self.authorizations_spec),
             peerings=dict(type='list', elements='dict', options=self.peerings_spec),
@@ -139,6 +139,7 @@ class AzureExpressRoute(AzureRMModuleBase):
         )
         super(AzureExpressRoute, self).__init__(derived_arg_spec=self.module_arg_spec,
                                                 supports_check_mode=False,
+                                                facts_module=True,
                                                 supports_tags=False)
     def exec_module(self, **kwargs):
         results = dict()
