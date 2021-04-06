@@ -93,23 +93,37 @@ class AzureExpressRoute(AzureRMModuleBase):
             bandwidth_in_mbps=dict(type='str')
         )
 
+        self.sku_spec=dict(
+            name=dict(type='str', required=True),
+            tier=dict(type='str', choices=['Standard', 'Premium', 'Basic', 'Local'], required=True),
+            family=dict(type='str', choices=['UnlimitedData', 'MeteredData'], required=True)
+        )
+
+        self.authorizations_spec=dict()
+
+        self.peerings_spec=dict()
 
         self.module_arg_spec = dict(
             resource_group=dict(type='str', required=True),
             name=dict(type='str', required=True),
-            location=dict(type='str'),
-            provider=dict(type='str'),
-            bandwidth_in_mbps=dict(type='str'),
-            sku=dict(),
-            billing_model=dict(
-                choices=['Metered', 'Unlimited'], default='Metered', type='str'),
+            location=dict(type='str', required=True),
+            sku=dict(type='dict', options=self.sku_spec, required=True),
+            tags=dict(type='list', elements='dict'),
+            allow_classic_operations=dict(type='bool'),
+            authorizations=dict(type='list', elements='dict', options=self.authorizations_spec),
+            peerings=dict(type='list', elements='dict', options=self.peerings_spec),
             state=dict(choices=['present', 'absent'],
                        default='present', type='str'),
+            service_key=dict(type='str'),
+            service_provider_notes=dict(type='str'),
             service_provider_properties=dict(type='dict', options=self.service_provider_properties_spec),
-            family=dict(type='str'),
-            tier=dict(type='str')
+            express_route_port=dict(type='str'),
+            bandwidth_in_gbps=dict(type='float'),
+            gateway_manager_etag=dict(type='str'),
+            global_reach_enabled=dict(type='bool')
         )
-        #self.resource_group = None
+
+        # self.resource_group = None
         self.name = None
         self.location = None
         self.provider = None
@@ -196,3 +210,4 @@ def main():
     AzureExpressRoute()
 if __name__ == '__main__':
     main()
+
