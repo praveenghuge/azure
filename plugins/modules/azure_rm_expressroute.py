@@ -81,23 +81,25 @@ try:
 except ImportError:
     # This is handled in azure_rm_common
     pass
+
+
 class AzureExpressRoute(AzureRMModuleBase):
     def __init__(self):
         print("AzureExpressRoute INIT CALLED")
         # define user inputs from playbook
-        self.service_provider_properties_spec=dict(
+        self.service_provider_properties_spec = dict(
             service_provider_name=dict(type='str'),
             peering_location=dict(type='str'),
             bandwidth_in_mbps=dict(type='str')
         )
 
-        self.sku_spec=dict(
+        self.sku_spec = dict(
             name=dict(type='str', required=True),
             tier=dict(type='str', choices=['Standard', 'Premium', 'Basic', 'Local'], required=True),
             family=dict(type='str', choices=['UnlimitedData', 'MeteredData'], required=True)
         )
 
-        self.authorizations_spec=dict(
+        self.authorizations_spec = dict(
             name=dict(type='str', required=True)
         )
 
@@ -133,6 +135,7 @@ class AzureExpressRoute(AzureRMModuleBase):
                                                 supports_check_mode=False,
                                                 facts_module=True,
                                                 supports_tags=False)
+
     def exec_module(self, **kwargs):
         results = dict()
 
@@ -144,11 +147,10 @@ class AzureExpressRoute(AzureRMModuleBase):
             self.delete_expressroute()
             self.results['state']['status'] = 'Deleted'
 
-        print("CALLING CREATE OR UPDATE")
-
-
+        self.log("CALLING CREATE OR UPDATE")
         self.create_or_update_express_route(self.module.params)
         return self.results
+
     def create_or_update_express_route(self, params):
         '''
         Create or update Express route.
@@ -156,13 +158,17 @@ class AzureExpressRoute(AzureRMModuleBase):
         '''
         self.log("create or update Express Route {0}".format(self.name))
         try:
-            response = self.network_client.express_route_circuits.create_or_update(resource_group_name=params.get("resource_group"), circuit_name=params.get("name"), parameters=params)
+            response = self.network_client.express_route_circuits.create_or_update(
+                resource_group_name=params.get("resource_group"),
+                circuit_name=params.get("name"),
+                parameters=params)
 
             self.log("Response : {0}".format(response))
         except CloudError as ex:
             self.fail("Failed to create express route {0} in resource group {1}: {2}".format(
                 self.name, self.resource_group, str(ex)))
         return True
+
     def delete_expressroute(self):
         '''
         Deletes specified express route circuit
@@ -177,8 +183,11 @@ class AzureExpressRoute(AzureRMModuleBase):
             self.fail(
                 "Error deleting the express route : {0}".format(str(e)))
         return True
+
+
 def main():
     AzureExpressRoute()
+
+
 if __name__ == '__main__':
     main()
-
