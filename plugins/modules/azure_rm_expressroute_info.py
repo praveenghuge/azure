@@ -90,8 +90,7 @@ class AzureExpressRouteInfo(AzureRMModuleBase):
         except CloudError as e:
             self.fail('Could not get facts for Subnet.')
         if response is not None:
-            results.append(self.format_response(response))
-            # results = self.format_response(response)
+            results = [self.format_response(response)]
         return results
 
     def format_response(self, item):
@@ -103,15 +102,16 @@ class AzureExpressRouteInfo(AzureRMModuleBase):
             'type': d.get('type', None),
             'location': d.get('location', '').replace(' ', '').lower(),
             'tags': d.get('tags', None),
-            # 'sku': <azure.mgmt.network.v2019_06_01.models._models_py3.ExpressRouteCircuitSku object at 0x7feb0dd91c40>,
-            # 'sku': d['sku']['tier'].lower(),
-            'allow_classic_operations': d.get('allow_classic_operations', None),
+            'sku': d.get('sku', None),
+            'etag': d.get('etag'),
+            'allow_classic_operations': d.get('allow_classic_operations'),
             'circuit_provisioning_state': d.get('circuit_provisioning_state', None),
             'service_provider_provisioning_state': d.get('service_provider_provisioning_state', None),
-            'authorizations': d.get('authorizations', []),
+            'authorizations': d.get('authorizations', None),
             'peerings': d.get('peerings', []),
             'service_key': d.get('service_key', None),
             'service_provider_notes': d.get('service_provider_notes', None),
+            'service_provider_properties': d.get('service_provider_properties', None),
             'express_route_port': d.get('express_route_port', None),
             'bandwidth_in_gbps': d.get('bandwidth_in_gbps', None),
             'stag': d.get('stag', None),
