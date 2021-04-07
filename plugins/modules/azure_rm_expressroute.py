@@ -84,8 +84,6 @@ except ImportError:
 class AzureExpressRoute(AzureRMModuleBase):
     def __init__(self):
         print("AzureExpressRoute INIT CALLED")
-        #self.log("_____________________________")
-        #self.log("__________INIT CALLED____________")
         # define user inputs from playbook
         self.service_provider_properties_spec=dict(
             service_provider_name=dict(type='str'),
@@ -111,26 +109,20 @@ class AzureExpressRoute(AzureRMModuleBase):
             tags=dict(type='dict'),
             allow_classic_operations=dict(type='bool'),
             authorizations=dict(type='list', options=self.authorizations_spec),
-            #peerings=dict(type='list', elements='dict', options=self.peerings_spec),
             state=dict(choices=['present', 'absent'],
                        default='present', type='str'),
-            service_key=dict(type='str'),
-            service_provider_notes=dict(type='str'),
             service_provider_properties=dict(type='dict', options=self.service_provider_properties_spec),
-            express_route_port=dict(type='str'),
-            bandwidth_in_gbps=dict(type='float'),
-            gateway_manager_etag=dict(type='str'),
             global_reach_enabled=dict(type='bool')
         )
 
-        # self.resource_group = None
+        self.resource_group = None
         self.name = None
         self.location = None
-        self.provider = None
-        self.peering_location = None
-        self.bandwith = None
+        self.allow_classic_operations = None
+        self.authorizations = None
+        self.service_provider_properties = None
+        self. global_reach_enabled = None
         self.sku = None
-        self.billing_model = None
         self.tags = None
         self.state = None
         self.results = dict(
@@ -143,20 +135,14 @@ class AzureExpressRoute(AzureRMModuleBase):
                                                 supports_tags=False)
     def exec_module(self, **kwargs):
         results = dict()
+
+        for key in list(self.module_arg_spec.keys()) + ['tags']:
+            setattr(self, key, kwargs[key])
+
         if self.state == "absent":
-            print("------------ABSENT-----------")
             results['type'] = "123"
             self.delete_expressroute()
             self.results['state']['status'] = 'Deleted'
-        self.log("-----------------------------")
-        self.log("-----------------------------")
-        self.log("-----------------------------")
-        self.log("-----------------------------")
-
-        print("-----------------------------")
-        print("-----------------------------")
-        print("-----------------------------")
-        print("-----------------------------")
 
         print("CALLING CREATE OR UPDATE")
 
@@ -170,23 +156,7 @@ class AzureExpressRoute(AzureRMModuleBase):
         '''
         self.log("create or update Express Route {0}".format(self.name))
         try:
-
-            #self.log("params: ", params)
-            #print("params: ", params)
-            #print("type(params): ", type(params))
-            #print("params.get(resource_group): ", params.get("resource_group"))
-            #print("dir====>", dir(self.network_client.express_route_circuits))
-            #print("rg: ", self.resource_group)
-            #print(dir(self.network_client.express_route_circuits))
-            #response = self.network_client.express_route_circuits.create_or_update(resource_group_name=params.get("resource_group"),
-            #                                                                             circuit_name=params.get("name"),
-            #                                                                             parameters=self.network_client.express_route_circuit(params))
-
-            import json
-            param_list = params
-            print("param_list: ", param_list)
-            print("type(param_list): ", type(param_list))
-            response = self.network_client.express_route_circuits.create_or_update(resource_group_name=params.get("resource_group"), circuit_name=params.get("name"), parameters=param_list)
+            response = self.network_client.express_route_circuits.create_or_update(resource_group_name=params.get("resource_group"), circuit_name=params.get("name"), parameters=params)
 
             self.log("Response : {0}".format(response))
         except CloudError as ex:
