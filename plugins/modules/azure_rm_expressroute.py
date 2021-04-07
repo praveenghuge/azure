@@ -99,9 +99,9 @@ class AzureExpressRoute(AzureRMModuleBase):
             family=dict(type='str', choices=['UnlimitedData', 'MeteredData'], required=True)
         )
 
-        self.authorizations_spec=dict()
-
-        self.peerings_spec=dict()
+        self.authorizations_spec=dict(
+            name=dict(type='str', required=True)
+        )
 
         self.module_arg_spec = dict(
             resource_group=dict(type='str', required=True),
@@ -110,8 +110,8 @@ class AzureExpressRoute(AzureRMModuleBase):
             sku=dict(type='dict', options=self.sku_spec, required=True),
             tags=dict(type='dict'),
             allow_classic_operations=dict(type='bool'),
-            authorizations=dict(type='list', elements='dict', options=self.authorizations_spec),
-            peerings=dict(type='list', elements='dict', options=self.peerings_spec),
+            authorizations=dict(type='list', options=self.authorizations_spec),
+            #peerings=dict(type='list', elements='dict', options=self.peerings_spec),
             state=dict(choices=['present', 'absent'],
                        default='present', type='str'),
             service_key=dict(type='str'),
